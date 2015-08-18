@@ -1,0 +1,9 @@
+README for gcd
+
+gcd takes 2 parameters, lat1,long  lat2,long2 and calculates the great
+circle distance between them in meters.
+The coordinates must be specified in degrees and decimal fractions,
+not minutes and seconds. The outputs from GPS apps and Google Maps are
+in a suitable format for input to the program.
+
+There is a manpage gcd.1, but there are no options including -h.
