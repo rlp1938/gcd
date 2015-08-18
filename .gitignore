@@ -1,0 +1,17 @@
+/aclocal.m4
+/autom4te.cache/
+/autoscan.log
+/compile
+/config.*
+/configure.scan
+/depcomp
+/.deps/
+/gcd
+/gcd.plist/
+/gcd.t2t
+/install-sh
+/Makefile
+/Makefile.in
+/missing
+/stamp-h1
+/test*
