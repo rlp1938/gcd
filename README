@@ -7,3 +7,14 @@ not minutes and seconds. The outputs from GPS apps and Google Maps are
 in a suitable format for input to the program.
 
 There is a manpage gcd.1, but there are no options including -h.
+
+ERRORS:
+The formulae I use are based on a sphere which of course the Earth only
+approximates. A consequence of this is that the results may be out by +-
+5 meters per kilometer. I use it for a walking distance calculator and
+in this use there will be additional errors when the roads walked are
+not exactly straight. Naturally if there is a significant inflexion I
+would calculate and sum the distances between these points.
+
+More information here:
+http://www.movable-type.co.uk/scripts/latlong.html#ellipsoid
