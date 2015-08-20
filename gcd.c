@@ -33,48 +33,32 @@
 #include <errno.h>
 #include <math.h>
 #include "fileops.h"
+#include "getoptions.h"
 
 #define PI 3.14159265358979323846
+long double safestrtold(const char *strld, const char *errtext);
 
 int main(int argc, char **argv)
 {
+	int optind = process_options(argc, argv);
 	// max precision by using all long doubles
 	long double lat1, lon1, lat2, lon2, lat1r, lon1r, lat2r, lon2r;
 	const long double torad = PI / 180.;
 	const long double earthrad = 6371000;	// get result in meters.
 	long double a, c, d;
-	if (argc != 3) {
-		dowrite(2,
-		"Usage: gcd latitude1,longitude1 latitude2,longitude2\n"
-		"All in degrees and decimal fractions.\n"
-		"Northern latitudes and Eastern longitudes to be unsigned,\n"
-		"Southern latitudes and Western longitudes to be negative.\n"
-	"The space after the comma separating lat, long pairs is optional\n"
-		"This format suits the output of GPS displays on smart\n"
-		"devices and web apps like Google Maps.\n");
-		exit(EXIT_FAILURE);
-	}
-	errno = 0;
 
-	char *latlong1 = strdup(argv[1]);
-	char *latlong2 = strdup(argv[2]);
+	char *latlong1 = strdup(argv[optind]);
+	optind++;
+	char *latlong2 = strdup(argv[optind]);
 	char *sep = strchr(latlong1, ',');
 	if (!sep) {
 		fprintf(stderr, "Malformed argv[1]: %s\n", argv[1]);
 		exit(EXIT_FAILURE);
 	}
 	*sep = '\0';
-	lat1 = strtold(latlong1, NULL);
-	if (errno) {
-		perror(latlong1);
-		exit(EXIT_FAILURE);
-	}
+	lat1 = safestrtold(latlong1, "latitude1");
 	char *lonstr = sep + 1;
-	lon1 = strtold(lonstr, NULL);
-	if (errno) {
-		perror(lonstr);
-		exit(EXIT_FAILURE);
-	}
+	lon1 = safestrtold(lonstr, "longitude1");
 
 	sep = strchr(latlong2, ',');
 	if (!sep) {
@@ -83,17 +67,9 @@ int main(int argc, char **argv)
 	}
 	*sep = '\0';
 
-	lat2 = strtold(latlong2, NULL);
-	if (errno) {
-		perror(latlong2);
-		exit(EXIT_FAILURE);
-	}
+	lat2 = safestrtold(latlong2, "latitude2");
 	lonstr = sep + 1;
-	lon2 = strtold(lonstr, NULL);
-	if (errno) {
-		perror(lonstr);
-		exit(EXIT_FAILURE);
-	}
+	lon2 = safestrtold(lonstr, "longitude2");
 	lat1r = lat1 * torad;
 	lon1r = lon1 * torad;
 	lat2r = lat2 * torad;
@@ -108,8 +84,26 @@ int main(int argc, char **argv)
 					thesinlon;
 	c = 2. * atan2l(sqrtl(a), sqrtl(1 - a));
 	d = floorl(earthrad * c + 0.5);	// round to nearest meter.
-	fprintf(stdout, "Distance is: %d meters.\n", (int) d);
+	if (qflag) {
+		fprintf(stdout, "%d\n", (int) d);
+	} else {
+		fprintf(stdout, "Distance is: %d meters.\n", (int) d);
+	}
+
 	free(latlong2);
 	free(latlong1);
 	return 0;
 }
+
+long double safestrtold(const char *strld, const char *errtext)
+{
+	/* strtold with error checking */
+	char *tail;
+	errno = 0;
+	long double result = strtold (strld, &tail);
+	if (tail == strld || errno) {
+		fprintf(stderr, "Unuseable %s\n", errtext);
+		exit(EXIT_FAILURE);
+	}
+	return result;
+} // safestrtold()

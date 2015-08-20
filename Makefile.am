@@ -3,7 +3,7 @@
 AM_CFLAGS=-Wall -Wextra
 
 bin_PROGRAMS=gcd
-gcd_SOURCES=gcd.c fileops.h fileops.c
+gcd_SOURCES=gcd.c fileops.h fileops.c getoptions.c getoptions.h
 gcd_LDADD=-lm
 man_MANS=gcd.1
 EXTRA_BUILD=gcd.1
