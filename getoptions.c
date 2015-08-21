@@ -20,7 +20,7 @@
 
 #include "getoptions.h"
 
-int process_options(int argc, char **argv)
+void process_options(int argc, char **argv)
 {
 	optstring = ":hq";
 	qflag = 0;
@@ -30,8 +30,7 @@ int process_options(int argc, char **argv)
   "\n\tOptions:\n"
   "\t-h, --help\n\toutputs this help message.\n"
   "\t-q, --quiet\n"
-  "\t Prevents output of \"Distance is:" "\"\n"
-  "\t Makes the output useable in a script\n"
+  "\t Outputs distance as a bald number, not wrapped in text.\n"
   ;
 	int opt;
 	//int digit_optind = 0;
@@ -55,20 +54,19 @@ int process_options(int argc, char **argv)
 			dohelp(0);
 		break;
 		case 'q':
-		qflag = 1;
-		break;
+			qflag = 1;
+			break;
 		case ':':
 			fprintf(stderr, "Option %c requires an argument\n"
 					,optopt);
 			dohelp(1);
-		break;
+			break;
 		case '?':
 			fprintf(stderr, "Illegal option: %c\n",optopt);
 			dohelp(1);
-		break;
+			break;
 		} //switch()
 	}//while()
-	return optind;
 }
 
 void dohelp(int forced)

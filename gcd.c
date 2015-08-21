@@ -40,20 +40,38 @@ long double safestrtold(const char *strld, const char *errtext);
 
 int main(int argc, char **argv)
 {
-	int optind = process_options(argc, argv);
+	process_options(argc, argv);
 	// max precision by using all long doubles
 	long double lat1, lon1, lat2, lon2, lat1r, lon1r, lat2r, lon2r;
 	const long double torad = PI / 180.;
 	const long double earthrad = 6371000;	// get result in meters.
 	long double a, c, d;
-
-	char *latlong1 = strdup(argv[optind]);
+	char *latlong1, *latlong2;
+	// check that args are present.
+	if (!argv[optind]) {
+		fprintf(stderr,
+				"First latitude/longitude pair not provided.\n");
+		dohelp(1);
+		exit(EXIT_FAILURE);
+	} else {
+		latlong1 = strdup(argv[optind]);
+	}
 	optind++;
-	char *latlong2 = strdup(argv[optind]);
+	if (!argv[optind]) {
+		fprintf(stderr,
+			"Second latitude/longitude pair not provided.\n");
+		dohelp(1);
+		exit(EXIT_FAILURE);
+	} else {
+		latlong2 = strdup(argv[optind]);
+	}
+
 	char *sep = strchr(latlong1, ',');
 	if (!sep) {
 		fprintf(stderr, "Malformed argv[1]: %s\n", argv[1]);
-		exit(EXIT_FAILURE);
+		dohelp(1);
+		exit(EXIT_FAILURE);	//dohelp() does not return but this stops
+							// gcc warnings further down.
 	}
 	*sep = '\0';
 	lat1 = safestrtold(latlong1, "latitude1");
@@ -63,6 +81,7 @@ int main(int argc, char **argv)
 	sep = strchr(latlong2, ',');
 	if (!sep) {
 		fprintf(stderr, "Malformed argv[2]: %s\n", argv[2]);
+		dohelp(1);
 		exit(EXIT_FAILURE);
 	}
 	*sep = '\0';

@@ -38,6 +38,6 @@ char *optstring;
 int qflag;
 
 void dohelp(int forced);
-int process_options(int argc, char **argv);
+void process_options(int argc, char **argv);
 
 #endif
